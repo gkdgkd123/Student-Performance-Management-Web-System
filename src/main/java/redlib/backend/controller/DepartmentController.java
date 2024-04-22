@@ -17,6 +17,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
+
 /**
  * 部门管理后端服务模块
  *
@@ -74,4 +77,10 @@ public class DepartmentController {
         os.close();
         workbook.close();
     }
+    @PostMapping("importDepartment")
+    @Privilege("add")
+    public int importUsers(@RequestParam("file") MultipartFile file) throws Exception {
+        return departmentService.importDepartment(file.getInputStream(), file.getOriginalFilename());
+    }
+
 }

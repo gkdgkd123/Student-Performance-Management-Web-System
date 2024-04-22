@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="redlib.backend.dao.ScoreMapper">
+
+    <!-- 结果映射定义 -->
+    <resultMap id="BaseResultMap" type="redlib.backend.model.Score">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="student_id" jdbcType="VARCHAR" property="studentId"/>
+        <result column="chinese_score" jdbcType="INTEGER" property="chineseScore"/>
+        <result column="math_score" jdbcType="INTEGER" property="mathScore"/>
+        <result column="english_score" jdbcType="INTEGER" property="englishScore"/>
+        <result column="entry_date" jdbcType="DATE" property="entryDate"/>
+        <result column="semester" jdbcType="VARCHAR" property="semester"/>
+        <result column="school_year" jdbcType="VARCHAR" property="schoolYear"/>
+        <result column="avg_score" jdbcType="DECIMAL" property="avgScore"/>
+        <result column="studentName" jdbcType="VARCHAR" property="studentName"/>
+        <result column="studentNumber" jdbcType="VARCHAR" property="studentNumber"/>
+        <result column="className" jdbcType="VARCHAR" property="className"/>
+        <result column="classId" jdbcType="INTEGER" property="classId"/>
+        <result column="all_score" jdbcType="INTEGER" property="allScore"/>
+    </resultMap>
+
+
+    <resultMap id="AvgResultMap" type="redlib.backend.model.Avg">
+        <result property="classId" column="classId"/>
+        <result property="avgChineseScore" column="avgChineseScore"/>
+        <result property="avgMathScore" column="avgMathScore"/>
+        <result property="avgEnglishScore" column="avgEnglishScore"/>
+        <result property="totalAvgScore" column="totalAvgScore"/>
+        <result property="className" jdbcType="VARCHAR" column="className"/>
+        <result property="passRate" column="passRate"/>
+        <result property="highScoreRate" column="highScoreRate"/>
+    </resultMap>
+
+
+
+    <!-- 基础列列表 -->
+    <sql id="Base_Column_List">
+        id, student_id, chinese_score, math_score, english_score, entry_date, semester, school_year
+    </sql>
+
+    <!-- 根据主键获取成绩信息 -->
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM scores
+        WHERE id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="count" resultType="integer" parameterType="redlib.backend.dto.query.ScoreQueryDTO">
+        SELECT COUNT(*)
+        FROM scores
+        <where>
+            <if test="schoolYear != null">
+                AND school_year LIKE CONCAT('%', #{schoolYear}, '%')
+            </if>
+            <if test="semester != null">
+                AND semester LIKE CONCAT('%', #{semester}, '%')
+            </if>
+        </where>
+    </select>
+    <select id="countAvg" resultType="integer" parameterType="redlib.backend.dto.query.ScoreQueryDTO">
+        SELECT COUNT(*)
+        FROM scores
+        <where>
+            <if test="schoolYear != null">
+                AND school_year LIKE CONCAT('%', #{schoolYear}, '%')
+            </if>
+            <if test="semester != null">
+                AND semester LIKE CONCAT('%', #{semester}, '%')
+            </if>
+        </where>
+    </select>
+
+
+    <insert id="insert" parameterType="redlib.backend.model.Score">
+        INSERT INTO scores (id, student_id, chinese_score, math_score, english_score, entry_date, semester, school_year)
+        VALUES (#{id,jdbcType=INTEGER}, #{studentId,jdbcType=VARCHAR}, #{chineseScore,jdbcType=INTEGER}, #{mathScore,jdbcType=INTEGER}, #{englishScore,jdbcType=INTEGER}, #{entryDate,jdbcType=DATE}, #{semester,jdbcType=VARCHAR}, #{schoolYear,jdbcType=VARCHAR})
+    </insert>
+
+    <!-- 选择性插入成绩记录 -->
+    <insert id="insertSelective" parameterType="redlib.backend.model.Score">
+        INSERT INTO scores
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">
+                student_id,
+            </if>
+            <if test="chineseScore != null">
+                chinese_score,
+            </if>
+            <if test="mathScore != null">
+                math_score,
+            </if>
+            <if test="englishScore != null">
+                english_score,
+            </if>
+            <if test="entryDate != null">
+                entry_date,
+            </if>
+            <if test="semester != null">
+                semester,
+            </if>
+            <if test="schoolYear != null">
+                school_year,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">
+                #{studentId,jdbcType=VARCHAR},
+            </if>
+            <if test="chineseScore != null">
+                #{chineseScore,jdbcType=INTEGER},
+            </if>
+            <if test="mathScore != null">
+                #{mathScore,jdbcType=INTEGER},
+            </if>
+            <if test="englishScore != null">
+                #{englishScore,jdbcType=INTEGER},
+            </if>
+            <if test="entryDate != null">
+                #{entryDate,jdbcType=DATE},
+            </if>
+            <if test="semester != null">
+                #{semester,jdbcType=VARCHAR},
+            </if>
+            <if test="schoolYear != null">
+                #{schoolYear,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 选择性更新成绩记录 -->
+    <update id="updateByPrimaryKeySelective" parameterType="redlib.backend.model.Score">
+        UPDATE scores
+        <set>
+            <if test="studentId != null">
+                student_id = #{studentId,jdbcType=VARCHAR},
+            </if>
+            <if test="chineseScore != null">
+                chinese_score = #{chineseScore,jdbcType=INTEGER},
+            </if>
+            <if test="mathScore != null">
+                math_score = #{mathScore,jdbcType=INTEGER},
+            </if>
+            <if test="englishScore != null">
+                english_score = #{englishScore,jdbcType=INTEGER},
+            </if>
+            <if test="entryDate != null">
+                entry_date = #{entryDate,jdbcType=DATE},
+            </if>
+            <if test="semester != null">
+                semester = #{semester,jdbcType=VARCHAR},
+            </if>
+            <if test="schoolYear != null">
+                school_year = #{schoolYear,jdbcType=VARCHAR},
+            </if>
+        </set>
+        WHERE id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="listByQuery" parameterType="redlib.backend.dto.query.ScoreQueryDTO" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM scores
+        <where>
+            <if test="studentId != null">
+                AND student_id = #{studentId}
+            </if>
+            <if test="chineseScore != null">
+                AND chinese_score = #{chineseScore}
+            </if>
+            <if test="mathScore != null">
+                AND math_score = #{mathScore}
+            </if>
+            <if test="englishScore != null">
+                AND english_score = #{englishScore}
+            </if>
+            <if test="schoolYear != null and schoolYear.trim() != ''">
+                AND school_year = #{schoolYear}
+            </if>
+            <if test="semester != null and semester.trim() != ''">
+                AND semester = #{semester}
+            </if>
+        </where>
+            LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 更新成绩记录 -->
+    <update id="updateByPrimaryKey" parameterType="redlib.backend.model.Score">
+        UPDATE scores
+        SET student_id = #{studentId,jdbcType=VARCHAR},
+            chinese_score = #{chineseScore,jdbcType=INTEGER},
+            math_score = #{mathScore,jdbcType=INTEGER},
+            english_score = #{englishScore,jdbcType=INTEGER},
+            entry_date = #{entryDate,jdbcType=DATE},
+            semester = #{semester,jdbcType=VARCHAR},
+            school_year = #{schoolYear,jdbcType=VARCHAR}
+        WHERE id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!-- 根据ID列表批量删除成绩记录 -->
+    <delete id="deleteByIds">
+        DELETE FROM scores
+        WHERE id IN
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id,jdbcType=INTEGER}
+        </foreach>
+    </delete>
+
+    <!-- 根据主键删除成绩记录 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        DELETE FROM scores
+        WHERE id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <!-- 根据多个查询条件查询成绩的数量 -->
+    <select id="countByCondition" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM scores
+        <where>
+            <if test="condition.studentId != null">
+                AND student_id = #{condition.studentId}
+            </if>
+            <if test="condition.semester != null">
+                AND semester = #{condition.semester}
+            </if>
+            <!-- 可以根据实际需要继续添加其他条件 -->
+        </where>
+    </select>
+
+    <!-- 根据多个查询条件查询成绩列表 -->
+    <select id="listByCondition" parameterType="map" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM scores
+        <where>
+            <if test="condition.studentId != null">
+                AND student_id = #{condition.studentId}
+            </if>
+            <if test="condition.semester != null">
+                AND semester = #{condition.semester}
+            </if>
+            <!-- 可以根据实际需要继续添加其他条件 -->
+        </where>
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+
+    <select id="list" resultMap="BaseResultMap" parameterType="map">
+        SELECT
+        sc.id,
+        sc.student_id,
+        s.name AS studentName,
+        s.student_number AS studentNumber,
+        c.class_name AS className,
+        sc.chinese_score,
+        sc.math_score,
+        sc.english_score,
+        sc.entry_date,
+        sc.semester,
+        sc.school_year,
+        (COALESCE(sc.chinese_score, 0) + COALESCE(sc.math_score, 0) + COALESCE(sc.english_score, 0)) / 3.0 AS avg_score,
+        (COALESCE(sc.chinese_score, 0) + COALESCE(sc.math_score, 0) + COALESCE(sc.english_score, 0)) AS all_score
+        FROM scores sc
+        JOIN students s ON sc.student_id = s.id
+        JOIN classes c ON s.class_id = c.id
+        <where>
+            <if test="queryDTO.schoolYear != null and queryDTO.schoolYear.trim() != ''">
+                AND sc.school_year LIKE CONCAT('%', #{queryDTO.schoolYear}, '%')
+            </if>
+            <if test="queryDTO.semester != null and queryDTO.semester.trim() != ''">
+                AND sc.semester LIKE CONCAT('%', #{queryDTO.semester}, '%')
+            </if>
+            <!-- 增加的模糊查询条件 -->
+            <if test="queryDTO.studentName != null and queryDTO.studentName.trim() != ''">
+                AND s.name LIKE CONCAT('%', #{queryDTO.studentName}, '%')
+            </if>
+            <if test="queryDTO.studentId != null">
+                AND s.id = #{queryDTO.studentId}
+            </if>
+            <if test="queryDTO.studentNumber != null and queryDTO.studentNumber.trim() != ''">
+                AND s.student_number LIKE CONCAT('%', #{queryDTO.studentNumber}, '%')
+            </if>
+            <if test="queryDTO.className != null and queryDTO.className.trim() != ''">
+                AND c.class_name LIKE CONCAT('%', #{queryDTO.className}, '%')
+            </if>
+            <if test="queryDTO.classId != null">
+                AND c.id = #{queryDTO.classId}
+            </if>
+        </where>
+        <choose>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'avgScore descend'">
+                ORDER BY avg_score DESC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'avgScore ascend'">
+                ORDER BY avg_score ASC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'chineseScore descend'">
+                ORDER BY sc.chinese_score DESC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'chineseScore ascend'">
+                ORDER BY sc.chinese_score ASC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'mathScore descend'">
+                ORDER BY sc.math_score DESC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'mathScore ascend'">
+                ORDER BY sc.math_score ASC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'englishScore descend'">
+                ORDER BY sc.english_score DESC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'englishScore ascend'">
+                ORDER BY sc.english_score ASC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'studentNumber descend'">
+                ORDER BY s.student_number DESC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'studentNumber ascend'">
+                ORDER BY s.student_number ASC
+            </when>
+            <!-- 基于学年的排序 -->
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'schoolYear descend'">
+                ORDER BY sc.school_year DESC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'schoolYear ascend'">
+                ORDER BY sc.school_year ASC
+            </when>
+            <!-- 基于学期的排序 -->
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'semester descend'">
+                ORDER BY sc.semester DESC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'semester ascend'">
+                ORDER BY sc.semester ASC
+            </when>
+            <!-- 基于班级名称的排序 -->
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'className descend'">
+                ORDER BY c.class_name DESC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'className ascend'">
+                ORDER BY c.class_name ASC
+            </when>
+            <otherwise>
+                ORDER BY sc.id
+            </otherwise>
+        </choose>
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="getAvg" resultMap="AvgResultMap" resultType="redlib.backend.dto.AvgDTO">
+        SELECT
+            st.class_id AS classId,
+            AVG(sc.chinese_score) AS avgChineseScore,
+            AVG(sc.math_score) AS avgMathScore,
+            AVG(sc.english_score) AS avgEnglishScore,
+            (AVG(IFNULL(sc.chinese_score, 0)) + AVG(IFNULL(sc.math_score, 0)) + AVG(IFNULL(sc.english_score, 0)))/1 AS totalAvgScore,
+            cl.class_name AS className
+        FROM
+            scores sc
+                JOIN students st ON sc.student_id = st.id
+                JOIN classes cl ON st.class_id = cl.id
+        WHERE
+            sc.school_year = #{schoolYear}
+          AND sc.semester = #{semester}
+        GROUP BY
+            st.class_id,
+            cl.class_name
+    </select>
+
+    <select id="listAvg" resultMap="AvgResultMap">
+        SELECT
+        cl.id AS classId,
+        cl.class_name AS className,
+        AVG(IFNULL(sc.chinese_score, 0)) AS avgChineseScore,
+        AVG(IFNULL(sc.math_score, 0)) AS avgMathScore,
+        AVG(IFNULL(sc.english_score, 0)) AS avgEnglishScore,
+        (AVG(IFNULL(sc.chinese_score, 0)) + AVG(IFNULL(sc.math_score, 0)) + AVG(IFNULL(sc.english_score, 0)))/1 AS totalAvgScore,
+        (COUNT(CASE WHEN IFNULL(sc.chinese_score, 0) >= 60 THEN 1 END) + COUNT(CASE WHEN IFNULL(sc.math_score, 0) >= 60 THEN 1 END) + COUNT(CASE WHEN IFNULL(sc.english_score, 0) >= 60 THEN 1 END)) / (COUNT(sc.student_id) * 3) AS passRate,
+        (COUNT(CASE WHEN IFNULL(sc.chinese_score, 0) >= 85 THEN 1 END) + COUNT(CASE WHEN IFNULL(sc.math_score, 0) >= 85 THEN 1 END) + COUNT(CASE WHEN IFNULL(sc.english_score, 0) >= 85 THEN 1 END)) / (COUNT(sc.student_id) * 3) AS highScoreRate,
+        sc.school_year AS schoolYear,
+        sc.semester AS semester
+        FROM
+        classes cl
+        LEFT JOIN students st ON cl.id = st.class_id
+        LEFT JOIN scores sc ON st.id = sc.student_id
+        <where>
+            <if test="queryDTO.schoolYear != null and queryDTO.schoolYear.trim() != ''">
+                AND sc.school_year = #{queryDTO.schoolYear}
+            </if>
+            <if test="queryDTO.semester != null and queryDTO.semester.trim() != ''">
+                AND sc.semester = #{queryDTO.semester}
+            </if>
+        </where>
+        GROUP BY
+        cl.id,
+        cl.class_name,
+        sc.school_year,
+        sc.semester
+        <choose>
+            <!-- Add your order by conditions here -->
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'avgChineseScore descend'">
+                ORDER BY AVG(IFNULL(sc.chinese_score, 0)) DESC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'avgChineseScore ascend'">
+                ORDER BY AVG(IFNULL(sc.chinese_score, 0)) ASC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'avgMathScore descend'">
+                ORDER BY AVG(IFNULL(sc.math_score, 0)) DESC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'avgMathScore ascend'">
+                ORDER BY AVG(IFNULL(sc.math_score, 0)) ASC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'avgEnglishScore descend'">
+                ORDER BY AVG(IFNULL(sc.english_score, 0)) DESC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'avgEnglishScore ascend'">
+                ORDER BY AVG(IFNULL(sc.english_score, 0)) ASC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'totalAvgScore descend'">
+                ORDER BY (AVG(IFNULL(sc.chinese_score, 0)) + AVG(IFNULL(sc.math_score, 0)) + AVG(IFNULL(sc.english_score, 0)))/3 DESC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'totalAvgScore ascend'">
+                ORDER BY (AVG(IFNULL(sc.chinese_score, 0)) + AVG(IFNULL(sc.math_score, 0)) + AVG(IFNULL(sc.english_score, 0)))/3 ASC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'schoolYear descend'">
+                ORDER BY sc.school_year DESC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'schoolYear ascend'">
+                ORDER BY sc.school_year ASC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'semester descend'">
+                ORDER BY sc.semester DESC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'semester ascend'">
+                ORDER BY sc.semester ASC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'className descend'">
+                ORDER BY cl.class_name DESC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'className ascend'">
+                ORDER BY cl.class_name ASC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'passRate descend'">
+                ORDER BY passRate DESC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'passRate ascend'">
+                ORDER BY passRate ASC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'highScoreRate descend'">
+                ORDER BY highScoreRate DESC
+            </when>
+            <when test="queryDTO.orderBy != null and queryDTO.orderBy == 'highScoreRate ascend'">
+                ORDER BY highScoreRate ASC
+            </when>
+            <otherwise>
+                ORDER BY cl.id
+            </otherwise>
+        </choose>
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+</mapper>

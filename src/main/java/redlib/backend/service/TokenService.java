@@ -48,4 +48,5 @@ public interface TokenService {
      * @param accessToken 用户的accessToken
      */
     void kick(String accessToken);
+    boolean isTokenValid(String accessToken);
 }

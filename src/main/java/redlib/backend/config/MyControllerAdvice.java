@@ -64,7 +64,13 @@ public class MyControllerAdvice implements ResponseBodyAdvice<Object> {
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter methodParameter, MediaType mediaType, Class<? extends HttpMessageConverter<?>> aClass, ServerHttpRequest request, ServerHttpResponse serverHttpResponse) {
         String path = request.getURI().getPath();
-        if (body instanceof ResponseData) {
+        if ("/Code/getVerify".equals(path)) {
+            return body;
+        }
+        if ("/Code//checkVerify".equals(path)) {
+            return body;
+        }
+            if (body instanceof ResponseData) {
             return body;
         } else if (path.contains("/swagger") || path.contains("/v3/api-docs")) {
             return body;

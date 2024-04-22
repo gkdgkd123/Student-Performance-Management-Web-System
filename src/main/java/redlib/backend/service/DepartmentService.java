@@ -7,6 +7,7 @@ import redlib.backend.dto.query.DepartmentQueryDTO;
 import redlib.backend.model.Page;
 import redlib.backend.vo.DepartmentVO;
 
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -44,4 +45,8 @@ public interface DepartmentService {
     void deleteByCodes(List<Integer> ids);
 
     Workbook export(DepartmentQueryDTO queryDTO);
+
+    int importDepartment(
+            InputStream inputStream,
+            String fileName) throws Exception;
 }

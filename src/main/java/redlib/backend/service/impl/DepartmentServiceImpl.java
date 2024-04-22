@@ -20,8 +20,10 @@ import redlib.backend.utils.ThreadContextHolder;
 import redlib.backend.utils.XlsUtils;
 import redlib.backend.vo.DepartmentVO;
 
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -175,5 +177,23 @@ public class DepartmentServiceImpl implements DepartmentService {
         }, map);
 
         return workbook;
+    }
+
+    @Override
+    public int importDepartment(InputStream inputStream, String fileName) throws Exception {
+        Assert.hasText(fileName, "文件名不能为空");
+
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("部门名称", "departmentName");
+        map.put("联系人", "contact");
+        map.put("手机号", "contactPhone");
+        map.put("描述", "description");
+        AtomicInteger row = new AtomicInteger(0);
+        XlsUtils.importFromExcel(inputStream, fileName, (departmentDTO) -> {
+            addDepartment(departmentDTO);
+            row.incrementAndGet();
+        }, map, DepartmentDTO.class);
+
+        return row.get();
     }
 }

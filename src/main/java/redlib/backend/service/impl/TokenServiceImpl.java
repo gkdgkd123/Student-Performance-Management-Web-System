@@ -148,4 +148,10 @@ public class TokenServiceImpl implements TokenService {
     private String makeToken() {
         return UUID.randomUUID().toString().replaceAll("-", "") + "";
     }
+
+    @Override
+    public boolean isTokenValid(String accessToken) {
+        Token token = this.getToken(accessToken);
+        return token != null;
+    }
 }

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="redlib.backend.dao.ClassMapper">
+
+    <resultMap id="BaseResultMap" type="redlib.backend.model.ClassModel">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="class_name" property="className" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, class_name
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM classes
+        WHERE id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <insert id="insert" parameterType="redlib.backend.model.ClassModel" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO classes (class_name)
+        VALUES (#{className,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="redlib.backend.model.ClassModel">
+        UPDATE classes
+        SET class_name = #{className,jdbcType=VARCHAR}
+        WHERE id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="count" resultType="integer" parameterType="redlib.backend.dto.query.ClassQueryDTO">
+        SELECT COUNT(*)
+        FROM classes
+        <where>
+            <if test="className != null">
+                AND class_name LIKE CONCAT('%', #{className}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="list" resultMap="BaseResultMap" parameterType="map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM classes
+        <where>
+            <if test="queryDTO.className != null">
+                AND class_name LIKE CONCAT('%', #{queryDTO.className}, '%')
+            </if>
+        </where>
+        ORDER BY id
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 根据ID列表批量删除班级记录 -->
+    <delete id="deleteByIds">
+        DELETE FROM classes
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
